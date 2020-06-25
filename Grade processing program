@@ -1,0 +1,148 @@
+student = dict()  # 딕셔너리 제작
+
+
+def start():
+    print('┌───────────────────────┐')
+    print('│성적처리 프로그램 ver0.01                     │')
+    print('│                                  만든이: KSH │')
+    print('│1.입력 2.출력 3.검색 4.삭제 5.수정 6.종료     │')
+    print('└───────────────────────┘')
+    a = int(input('사용할 기능을 선택하세요.'))
+    if a == 1 :         #1번.입력 검색
+        dic={}
+        with open('성적보관.txt','r') as file:
+            for line in file :
+                line = line.strip('\n')
+                dic[line.split()[0]] = line.split()[1:]
+        name = input('이름을 입력하세요 : ')
+        if (name not in dic) == True:
+            print('국어 영어 수학 성적을 입력하세요')
+            kor,eng,math = map(int,input().split())
+            scr = (kor+eng+math)
+            avg = scr/3
+            print()
+            print('이름: {0} 국어: {1} 영어: {2} 수학: {3} 총점: {4} 평균: {5}'.format(name,kor,eng,math,scr,avg))
+            student[name] = [kor, eng, math, scr, avg] # 입력된걸 딕셔너리에 투입
+            file=open('성적보관.txt','a')              # txt파일에 저장하는 코드
+            file.write('{0} {1} {2} {3} {4} {5}\n'.format(name,kor,eng,math,scr,avg)) # 이름 국어 영어 수학 총점 평균 순으로 기입
+            file.close()
+            start()       # 다시 처음화면으로
+        else:
+            print('-------------------------')
+            print('학생이 이미 존재합니다.')
+            print('처음 화면으로 돌아갑니다.')
+            print('-------------------------')
+            start()
+        
+    elif a == 2 :       #2번 입력 출력
+        file=open('성적보관.txt','r')    # with open('성적보관.txt,'r') as file:
+        read = file.read()               #  read = file.read()
+        print(read)                      # print(read) 해줘도 될거같다.
+        file.close()
+        start()
+                  
+                
+    elif a == 3 :       #검색
+        dic={}
+        with open('성적보관.txt','r') as file:
+            for line in file :
+                line = line.strip('\n')
+                dic[line.split()[0]] = line.split()[1:]
+            find = input('찾으시려는 이름을 입력하세요 : ')
+            if (find in dic)==True:
+                print('------------------------------------------')
+                print('이름 국어 영어 수학 총점 평균')
+                print(find,dic.get(find))  # 사전이름.get(키이름) = 해당키에 속한 값을 불러옴
+                print('------------------------------------------')
+                start()
+            else:
+                print('------------------------------')
+                print('해당 이름이 없습니다.')
+                print('처음 화면으로 돌아갑니다.')
+                print('------------------------------')
+                start()
+
+    elif a == 4 :       #삭제
+        dic={}
+        with open('성적보관.txt','r') as file:
+            for line in file :
+                line = line.strip('\n')
+                dic[line.split()[0]] = line.split()[1:]
+            delt = input('삭제하려는 이름을 입력하세요 : ')
+            if (delt in dic)==True:
+                dic.pop(delt)
+                print(delt,'의 정보를 모두 삭제하였습니다.')   # 딕셔너리에서 삭제
+
+                
+                with open('성적보관.txt', 'r') as infile:     #txt파일에서 삭제하기
+                    data = infile.readlines()
+                with open("성적보관.txt", 'w') as outfile:  # 모드 w라서 처음부터 새로 작성함
+                    for i in data:
+                        if not i.startswith(delt):   # 해당문자열로 시작하지 않는다면
+                            outfile.write(i)         # 다시 txt파일에 작성
+
+                #q = dic.items()
+                #file=open('성적보관.txt','w')
+                #file.write(q)  <---딕셔너리는 쓰기가 불가능  다른방법을 찾아야함
+                #file.close
+                start()
+                
+            else:
+                print('------------------------------')
+                print('해당 이름은 존재하지 않습니다.')
+                print('처음 화면으로 돌아갑니다.')
+                print('------------------------------')
+                start()
+    elif a == 5 :       #수정
+        dic={}
+        with open('성적보관.txt','r') as file:
+            for line in file :
+                line = line.strip('\n')
+                dic[line.split()[0]] = line.split()[1:]
+        
+        revise= input('수정할 사람 이름을 입력해 주세요 : ')
+        if(revise in dic)==True:
+            print('국어 영어 수학 성적순으로 입력 하세요')
+            kor,eng,math = map(int,input().split())
+            scr=kor+eng+math
+            avg=scr/3
+            dic[revise] = [kor,eng,math,scr,avg]
+            with open('성적보관.txt', 'r') as infile:     #txt파일에서 삭제하기
+                data = infile.readlines()
+            with open("성적보관.txt", 'w') as outfile:  # 모드 w라서 처음부터 새로 작성함
+                for i in data:
+                    if not i.startswith(revise):   # 해당문자열로 시작하지 않는다면
+                            outfile.write(i)         # 다시 txt파일에 작성            
+            print(revise,dic.get(revise)) # 수정완료
+            file=open('성적보관.txt','a')              # txt파일에 저장하는 코드
+            file.write('{0} {1} {2} {3} {4} {5}\n'.format(revise,kor,eng,math,scr,avg)) # 이름 국어 영어 수학 총점 평균 순으로 기입
+            file.close()
+            start()
+        else:
+            print('-------------------------------')
+            print('해당 이름은 존재하지 않습니다.')
+            print('처음 화면으로 돌아갑니다.')
+            print('-------------------------------')
+            start()
+        
+
+    elif a == 6 :       #종료
+        exit()
+    else:            #딴 숫자 눌림
+        print()
+        print('Error : 1~6번을 눌려주세요')
+        print()
+        start()
+
+dic={}
+with open('성적보관.txt','r') as file:
+    for line in file :
+        line = line.strip('\n')
+        dic[line.split()[0]] = line.split()[1:]
+start()  # 시작 
+
+
+
+
+
+
