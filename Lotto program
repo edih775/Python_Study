@@ -1,0 +1,18 @@
+import random
+js=[]   #로또 번호가 들어갈 리스트
+
+def lotto ():
+    for i in range(6):                #로또번호는 6개를 뽑아야한다.
+        while True:
+            j = random.randint(1,46)  # 로또번호의 범위는 1~45사이면서
+            if j not in js :          # 서로 중복 되지 않는 수를.
+                js.append(j)          # 리스트에 추가한다.
+                break
+    for a in range(1):                # 보너스 번호는 하나만 뽑는다.
+        while True:
+            b = random.randint(1,46)  # 보너스 번호의 범위는 1~45사이면서
+            if b not in js:           # 앞서나온 로또 번호와 중복 되지 않아야 한다.
+                break
+    print(js,'보너스 번호 :',b)
+
+lotto()
