@@ -1,0 +1,182 @@
+import os
+
+
+class FM :   #파일 관리 클래스
+
+    @staticmethod
+    def save():                                 #텍스트 파일을 딕셔너리로 불러와 저장하는 메서드
+        with open('성적보관.txt','r') as file:
+            for line in file :
+                line = line.strip('\n')
+                dic[line.split()[0]] = line.split()[1:]
+    @staticmethod
+    def load():                             # 텍스트 파일의 내용을 출력해주는 메서드
+        file = open('성적보관.txt', 'r')  # with open('성적보관.txt,'r') as file:
+        read = file.read()  # read = file.read()
+        print(read)  # print(read) 해줘도 될거같다.
+        file.close()
+
+    @staticmethod
+    def check_file():                       #텍스트 파일이 삭제되거나 손실되었을 경우 리셋해주는 메서드
+        if os.path.isfile('성적보관.txt')==False:   # DB 파일 유무 확인
+            with open('성적보관.txt', 'w') as file:
+                pass
+
+class Main :   #START
+
+    @staticmethod
+    def start():
+        FM.check_file()  #파일 이상 여부 체크
+        print('┌──────────────────────────────────────────────┐')
+        print('│성적처리 프로그램 ver0.01                      │')
+        print('│                                  만든이: KSH │')
+        print('│1.입력 2.출력 3.검색 4.삭제 5.수정 6.종료      │')
+        print('└──────────────────────────────────────────────┘')
+        a = int(input('사용할 기능을 선택하세요.'))
+
+        if a == 1 :
+            Function.insert()
+
+        elif a == 2:
+            Function.output()
+
+        elif a == 3:
+            Function.search()
+
+        elif a == 4:
+            Function.delete()
+
+        elif a == 5:
+            Function.update()
+
+        elif a == 6:
+            Function.exit()
+
+
+
+class Function(Main) :   #메인의 하위 클래스 + 펑션
+
+    @staticmethod
+    def insert():
+        FM.save()
+        name = input('이름을 입력하세요 : ')
+        if (name not in dic) == True:
+            print('국어 영어 수학 성적을 입력하세요')
+            kor, eng, math = map(int, input().split())
+            scr = (kor + eng + math)
+            avg = scr / 3
+            print()
+            print('이름: {0} 국어: {1} 영어: {2} 수학: {3} 총점: {4} 평균: {5}'.format(name, kor, eng, math, scr, avg))
+            dic[name] = [kor, eng, math, scr, avg]
+            file = open('성적보관.txt', 'a')  # txt파일에 저장하는 코드
+            file.write('{0} {1} {2} {3} {4} {5}\n'.format(name, kor, eng, math, scr, avg))  # 이름 국어 영어 수학 총점 평균 순으로 기입
+            file.close()
+            Main.start()
+        else:
+            print('해당이름은 이미 존재합니다. 동명이인을 추가 하시려면 이름뒤에 번호를 매겨주세요')
+            Function.insert()
+
+    @staticmethod
+    def output():
+        FM.load()
+        Main.start()
+
+    @staticmethod
+    def search():
+        FM.save()
+        what = int(input('검색할 내용은 무엇입니까? 1.이름 2.평균 : '))
+
+        if what == 1:
+            find = input('찾으시려는 이름을 입력하세요 : ')  # 찾으려는 이름
+            if (find in dic) == True:
+                print('------------------------------------------')
+                print('이름 국어 영어 수학 총점 평균')
+                print(find, dic.get(find))  # 사전이름.get(키이름) = 해당키에 속한 값을 불러옴
+                print('------------------------------------------')
+                Main.start()
+            else:
+                print('------------------------------')
+                print('해당 이름이 없습니다.')
+                print('처음 화면으로 돌아갑니다.')
+                print('------------------------------')
+                Main.start()
+        elif what == 2:  # 평균 검색 실시
+            findscr = int(input('기준 점수를 입력하세요 '))
+            redic = {}
+            for key, value in dic.items():
+                cc = float(value[4])
+                if cc >= findscr:
+                    redic.setdefault(key, value)
+            print(redic,end='\n')
+            Main.start()
+
+    @staticmethod
+    def delete():
+        dic = {}
+        with open('성적보관.txt', 'r') as file:
+            for line in file:
+                line = line.strip('\n')
+                dic[line.split()[0]] = line.split()[1:]
+            delt = input('삭제하려는 이름을 입력하세요 : ')
+            if (delt in dic) == True:
+                dic.pop(delt)
+                print(delt, '의 정보를 모두 삭제하였습니다.')
+
+                with open('성적보관.txt', 'r') as infile:
+                    data = infile.readlines()
+                with open("성적보관.txt", 'w') as outfile:
+                    for i in data:
+                        if not i.startswith(delt):
+                            outfile.write(i)
+                Main.start()
+            else:
+                print('------------------------------')
+                print('해당 이름은 존재하지 않습니다.')
+                print('처음 화면으로 돌아갑니다.')
+                print('------------------------------')
+                Main.start()
+
+    @staticmethod
+    def update():
+        dic={}
+        with open('성적보관.txt', 'r') as file:
+            for line in file:
+                line = line.strip('\n')
+                dic[line.split()[0]] = line.split()[1:]
+
+        update = input('수정할 사람의 이름을 입력하세요 :')
+        if (update in dic) == True:
+            kor, eng, math = map(int, input('국어 영어 수학 순으로 입력하세요.').split())
+            scr = kor + eng + math
+            avg = scr / 3
+            dic[update] = [kor, eng, math, scr, avg]
+            with open('성적보관.txt', 'r') as infile:  # txt파일에서 삭제하기
+                data = infile.readlines()
+            with open("성적보관.txt", 'w') as outfile:  # 모드 w라서 처음부터 새로 작성함
+                for i in data:
+                    if not i.startswith(update):  # 해당문자열로 시작하지 않는다면
+                        outfile.write(i)  # 다시 txt파일에 작성
+            print(update, dic.get(update))  # 수정완료
+            file = open('성적보관.txt', 'a')  # txt파일에 저장하는 코드
+            file.write('{0} {1} {2} {3} {4} {5}\n'.format(update, kor, eng, math, scr, avg))  # 이름 국어 영어 수학 총점 평균 순으로 기입
+            file.close()
+            Main.start()
+        else:
+            print('-------------------------------')
+            print('해당 이름은 존재하지 않습니다.')
+            print('처음 화면으로 돌아갑니다.')
+            print('-------------------------------')
+            Main.start()
+
+    @staticmethod
+    def exit():
+        print('성적관리 프로그램을 종료합니다.')
+        exit()
+
+
+
+
+
+dic = {}
+Main.start()
+
