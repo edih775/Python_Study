@@ -1,0 +1,21 @@
+a,b = map(int,input().split())
+
+mineBox = []
+for i in range(b):
+    mineBox.append(list(input()))
+
+for i in range(b):
+    for j in range(a):
+        if mineBox[i][j]=='*':
+            print(mineBox[i][j],sep='',end='')
+        else:
+            count = 0
+            for x in range(i-1,i+2):
+                for y in range(j-1,j+2):
+                    if x < 0 or y < 0 or x >= b or y >= a:
+                        continue
+                    elif mineBox[x][y]=='*':
+                        count += 1
+            print(count, sep='', end='')                          
+
+    print()
